@@ -1,0 +1,17 @@
+# build output
+/build/
+/dist/
+*.cat
+*.cer
+*.pfx
+
+# local test scans (may contain personal images)
+/scans/
+
+# reference checkouts used during development (not needed to build)
+/third_party/
+
+# editor / OS
+.vs/
+*.user
+Thumbs.db

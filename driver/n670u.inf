@@ -1,0 +1,76 @@
+;
+; n670u.inf - WIA driver for Canon CanoScan N670U / N676U / LiDE20 (USB 04A9:220D)
+;
+; Kernel side : usbscan.sys    (Microsoft, inbox, via sti.inf STI.USBSection)
+; WIA side    : wiafbdrv.dll   (Microsoft flatbed driver, via STI.MICRODRIVERSection)
+;               + n670mdrv.dll (this package: SANE plustek backend as a WIA microdriver)
+;
+; No kernel-mode code is shipped. The catalog is signed with a locally
+; generated, locally trusted self-signed certificate (scripts\package.ps1).
+; Not affiliated with or endorsed by Canon Inc.
+;
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = Image
+ClassGUID   = {6bdd1fc6-810f-11d0-bec7-08002be2092f}
+Provider    = %Provider%
+DriverVer   = 11/09/2026,1.0.0.9
+CatalogFile = n670u.cat
+PnpLockdown = 1
+
+[SourceDisksNames]
+1 = %DiskName%,,,
+
+[SourceDisksFiles]
+n670mdrv.dll = 1
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[Manufacturer]
+%Mfg% = Models, NTamd64.10.0...16299
+
+[Models.NTamd64.10.0...16299]
+%N670U.DeviceDesc% = N670U.Scanner, USB\VID_04A9&PID_220D
+
+[N670U.Scanner]
+Include         = sti.inf
+Needs           = STI.USBSection, STI.MICRODRIVERSection
+SubClass        = StillImage
+DeviceType      = 1
+DeviceSubType   = 0x1
+Capabilities    = 0x30
+DeviceData      = N670U.DeviceData
+AddReg          = N670U.AddReg
+CopyFiles       = N670U.CopyFiles
+ICMProfiles     = "sRGB Color Space Profile.icm"
+
+[N670U.Scanner.Services]
+Include = sti.inf
+Needs   = STI.USBSection.Services
+
+[N670U.DeviceData]
+Server            = local
+UI Class ID       = {4DB1AD10-3391-11D2-9A33-00C04FA36145}
+MicroDriver       = %13%\n670mdrv.dll
+Resolutions       = "75,100,150,200,300,600"
+; 0 = off. 10 = scan flow, 255 = everything. Log goes to
+; C:\ProgramData\N670U\n670u.log (folder created by install.ps1)
+DebugLevel        = 0
+; 1-bit B/W polarity sent to WIA (1 = bit set means white)
+LineartWhiteIsOne = 1
+; tone curve in percent: 100 = linear (default), 90 = darker/richer
+Gamma             = 100
+
+[N670U.AddReg]
+HKR,,HardwareConfig,1,1
+
+[N670U.CopyFiles]
+n670mdrv.dll
+
+[Strings]
+Provider          = "N670U community driver (unofficial)"
+Mfg               = "Canon"
+DiskName          = "CanoScan N670U WIA driver"
+N670U.DeviceDesc  = "Canon CanoScan N670U/N676U/LiDE20"
